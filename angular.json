@@ -5,7 +5,17 @@
   "projects": {
     "fean-web-recorder": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -93,6 +103,6 @@
     }
   },
   "cli": {
-    "analytics": "3eaa9218-d8f5-42ad-b814-eb49ba787e6e"
+    "analytics": "1167cb92-b0b0-4225-bd11-1f89ab059882"
   }
 }
