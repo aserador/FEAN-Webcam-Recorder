@@ -1,10 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'fean-web-recorder';
+  items: MenuItem[] = [];
+  @ViewChild('menuItems') menuItems!: ElementRef;
+
+  ngOnInit() {
+    this.items = [
+      {
+        label: 'Record',
+        routerLink: '/record'
+      },
+      {
+        label: 'My Videos',
+        routerLink: ''
+      },
+    ];
+  }
+
 }
