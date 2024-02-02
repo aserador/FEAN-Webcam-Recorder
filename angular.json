@@ -25,16 +25,9 @@
               "src/assets"
             ],
             "styles": [
-              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
               "src/styles.css"
             ],
-            "scripts": [],
-            "server": "src/main.server.ts",
-            "prerender": true,
-            "ssr": {
-              "entry": "server.ts"
-            }
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -100,6 +93,6 @@
     }
   },
   "cli": {
-    "analytics": "0b485b82-3793-47fb-b90e-e9ea68ccc4d2"
+    "analytics": "3eaa9218-d8f5-42ad-b814-eb49ba787e6e"
   }
 }
