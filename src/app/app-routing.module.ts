@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LandingComponent } from './landing/landing.component';
-import { RecordComponent } from './record/record.component';
-import { ReviewComponent } from './review/review.component';
 import { UploadComponent } from './upload/upload.component';
+import { RecordRtcComponent } from './record-rtc/record-rtc.component';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
-  { path: 'record', component: RecordComponent },
-  { path: 'review', component: ReviewComponent },
+  { path: 'record', component: RecordRtcComponent },
   { path: 'upload', component: UploadComponent },
   { path: '**', redirectTo: '' } // redirect to `LandingComponent` if no matching route is found
 ];

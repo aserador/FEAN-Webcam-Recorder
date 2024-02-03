@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RecordComponent } from './record.component';
+import { RecordRtcComponent } from './record-rtc.component';
 
-describe('RecordComponent', () => {
-  let component: RecordComponent;
-  let fixture: ComponentFixture<RecordComponent>;
+describe('RecordRtcComponent', () => {
+  let component: RecordRtcComponent;
+  let fixture: ComponentFixture<RecordRtcComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [RecordComponent]
+      declarations: [RecordRtcComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(RecordComponent);
+    fixture = TestBed.createComponent(RecordRtcComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

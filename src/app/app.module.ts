@@ -17,26 +17,27 @@ import { RatingModule } from 'primeng/rating';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenubarModule } from 'primeng/menubar';
 
+import { WebcamModule } from 'ngx-webcam';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './landing/landing.component';
-import { RecordComponent } from './record/record.component';
-import { ReviewComponent } from './review/review.component';
 import { UploadComponent } from './upload/upload.component';
+import { RecordRtcComponent } from './record-rtc/record-rtc.component';
+import { VideoRecordingService } from './record-rtc/record-service';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingComponent,
-    RecordComponent,
-    ReviewComponent,
-    UploadComponent
+    UploadComponent,
+    RecordRtcComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    WebcamModule,
     MenubarModule,
     FormsModule,
     TableModule,
@@ -52,7 +53,7 @@ import { UploadComponent } from './upload/upload.component';
     DropdownModule,
     ButtonModule
   ],
-  providers: [],
+  providers: [VideoRecordingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
