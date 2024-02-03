@@ -16,8 +16,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { RatingModule } from 'primeng/rating';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenubarModule } from 'primeng/menubar';
-
-import { WebcamModule } from 'ngx-webcam';
+import { SelectButtonModule } from 'primeng/selectbutton';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,7 +36,7 @@ import { VideoRecordingService } from './record-rtc/record-service';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    WebcamModule,
+    SelectButtonModule,
     MenubarModule,
     FormsModule,
     TableModule,

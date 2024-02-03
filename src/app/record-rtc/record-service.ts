@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import RecordRTC from 'recordrtc';
 import moment from "moment";
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
 interface RecordedVideoOutput {
   blob: Blob;
@@ -22,6 +22,31 @@ export class VideoRecordingService {
   private _recordingTime = new Subject<string>();
   private _recordingFailed = new Subject<string>();
 
+  private resolutions = {
+    '420p': { width: 640, height: 480, bitsPerSecond: 1000000 },
+    '720p': { width: 1280, height: 720, bitsPerSecond: 3000000 },
+    '1080p': { width: 1920, height: 1080, bitsPerSecond: 5000000 },
+    '4k': { width: 3840, height: 2160, bitsPerSecond: 25000000 },
+  };
+  
+  private options: RecordRTC.Options = {
+    type: 'video',
+    mimeType: 'video/mp4',
+    bitsPerSecond: 128000
+  };
+  
+  private selectedResolution = new BehaviorSubject<'420p' | '720p' | '1080p' | '4k'>('720p');
+
+  constructor() {
+    this.selectedResolution.subscribe(resolution => {
+      const selectedResolution = this.resolutions[resolution];
+      this.options.bitsPerSecond = selectedResolution.bitsPerSecond;
+    });
+  }
+  
+  public setResolution(resolution: '420p' | '720p' | '1080p' | '4k'): void {
+    this.selectedResolution.next(resolution);
+  }
 
   getRecordedUrl(): Observable<string> {
     return this._recordedUrl.asObservable();
@@ -48,7 +73,6 @@ export class VideoRecordingService {
 
     var browser = <any>navigator;
     if (this.recorder) {
-      // It means recording is already started or it is already recording something
       console.log('Already recording');
       return Promise.resolve();
     }
@@ -72,11 +96,7 @@ export class VideoRecordingService {
 
   private record() {
     if (this.stream) {
-      this.recorder = new RecordRTC(this.stream, {
-        type: 'video',
-        mimeType: 'video/webm',
-        bitsPerSecond: 44000
-      });
+      this.recorder = new RecordRTC(this.stream, this.options);
       this.recorder.startRecording();
       this.startTime = moment();
     } else {

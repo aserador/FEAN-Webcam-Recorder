@@ -18,7 +18,28 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   videoBlob!: Blob
   videoName!: string
   videoStream!: MediaStream;
-  videoConf = { video: { facingMode:"user", width: 320 }, audio: true}
+
+  videoConf = { 
+    video: { 
+      facingMode: "environment", 
+      width: window.innerWidth * 0.65
+    }, 
+    audio: true
+  };
+  videoQualities = [
+    { label: '420p', value: '420p' },
+    { label: '720p', value: '720p' },
+    { label: '1080p', value: '1080p' },
+    { label: '4k', value: '4k' },
+  ];
+  private _selectedQuality = '720p';
+
+  set selectedQuality(value: string) {
+    if (this.videoQualities.some(q => q.value === value)) {
+      this._selectedQuality = value;
+      this.videoRecordingService.setResolution(value as "420p" | "720p" | "1080p" | "4k");
+    }
+  }
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -26,7 +47,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     private sanitizer: DomSanitizer
   ) {
     console.log('RecordRtcComponent constructor called');
-    // Make sure these methods are implemented in your VideoRecordingService
+
     this.videoRecordingService.recordingFailed().subscribe(() => {
       this.isVideoRecording = false;
       this.ref.detectChanges();
@@ -62,6 +83,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     console.log('startVideoRecording called');
     if (!this.isVideoRecording) {
       this.video.controls = false;
+      this.video.muted = true;
       this.isVideoRecording = true;
       this.videoRecordingService.startRecording(this.videoConf)
       .then(stream => {
@@ -77,7 +99,6 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   abortVideoRecording() {
     if (this.isVideoRecording) {
       this.isVideoRecording = false;
-      // Make sure this method is implemented in your VideoRecordingService
       this.videoRecordingService.abortRecording();
       this.video.controls = false;
     }
@@ -85,7 +106,6 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
 
   stopVideoRecording() {
     if (this.isVideoRecording) {
-      // Make sure this method is implemented in your VideoRecordingService
       this.videoRecordingService.stopRecording();
       if (this.video.srcObject) {
         let stream = this.video.srcObject as MediaStream;
@@ -95,6 +115,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       this.video.srcObject = null;
       this.isVideoRecording = false;
       this.video.controls = true;
+      this.video.muted = false;
     }
   }
 
