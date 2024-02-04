@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 # Environment
-/src/environments/environments.js
+/src/environments/credentials.json

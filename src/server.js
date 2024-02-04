@@ -1,42 +1,65 @@
-const admin = require('firebase-admin');
 const express = require('express');
-const multer = require('multer');
-const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
+const multer = require('multer');
+const admin = require('firebase-admin');
+const serviceAccount = require('./environments/credentials.json');
+
+// Initialize Firebase
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://fean-web-recorder-default-rtdb.firebaseio.com/',
+  storageBucket: 'gs://fean-web-recorder.appspot.com'
+});
+
+const bucket = admin.storage().bucket();
+const db = admin.database();
 
 const app = express();
 app.use(cors());
 
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024, // limit to 50MB
+  },
+});
 
-const firebaseConfig = require('./environments/environments.js').firebaseConfig;
-admin.initializeApp(firebaseConfig);
+app.post('/upload', upload.single('file'), (req, res) => {
+  // TODO: Authenticate the user and get their ID - for now, use a sample user
+  const userId = 'sampleUser';
 
-app.post('/upload', upload.single('file'), async (req, res) => {
-  try {
-    const bucket = admin.storage().bucket();
-    const { originalname, buffer } = req.file;
-
-    const blob = bucket.file(originalname.replace(/ /g, "_"));
-    const blobStream = blob.createWriteStream({
-      resumable: false
-    });
-    console.log("attempting to upload file")
-    blobStream.on('finish', () => {
-      const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/${encodeURI(blob.name)}?alt=media`;
-      res.status(200).send({ fileName: originalname, fileLocation: publicUrl });
-    });
-
-    blobStream.end(buffer);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: 'An error occurred while uploading the file' });
+  if (!req.file) {
+    res.status(400).send('No file uploaded.');
+    return;
   }
+
+  // Create a new blob in the bucket and upload the file data
+  const blob = bucket.file(req.file.originalname.replace(/ /g, "_"));
+  const blobStream = blob.createWriteStream();
+
+  blobStream.on('error', err => {
+    res.status(500).send(err);
+  });
+
+  blobStream.on('finish', async () => {
+    // The public URL can be used to directly access the file via HTTP
+    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+    // Save the data to the database under the specific user
+    const ref = db.ref(`users/${userId}/videos`);
+    await ref.push({ fileName: req.file.originalname, fileLocation: publicUrl });
+
+    res.status(200).send({ fileName: req.file.originalname, fileLocation: publicUrl });
+  });
+
+  blobStream.end(req.file.buffer);
 });
 
-app.use(function(err, req, res, next) {
-  console.error(err.stack); // Log error stack to console
-  res.status(500).send('Something broke!');
-});
+app.use(cors({
+  origin: 'http://localhost:4200' 
+}));
 
-app.listen(3000, () => console.log('Server started on port 3000'));
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`App listening on port ${port}`);
+});

@@ -143,7 +143,7 @@ export class VideoRecordingService {
     if (this.recorder) {
       const recordedBlob = this.recorder.getBlob();
       const blobUrl = URL.createObjectURL(recordedBlob); // Create a URL from the Blob
-      const recordedName = encodeURIComponent('video_' + new Date().getTime() + '.mp4');
+      const recordedName = encodeURIComponent('video_' + new Date().getTime() + '.webm');
       this._recorded.next({ blob: recordedBlob, url: blobUrl, title: recordedName }); // Pass the URL instead of the Blob
       this.stopMedia();
     }

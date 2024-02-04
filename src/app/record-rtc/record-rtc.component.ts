@@ -167,7 +167,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   }
 
   downloadVideoRecordedData() {
-    this._downloadFile(this.videoBlob, 'video/mp4', this.videoName);
+    this._downloadFile(this.videoBlob, 'video/webm', this.videoName);
   }
 
   ngOnDestroy(): void {
@@ -210,7 +210,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       formData.append('file', this.videoToUpload.blob, this.videoToUpload.title);
 
       console.log('uploading video');
-      const req = new HttpRequest('POST', 'http://localhost:3000/upload', formData, {
+      const req = new HttpRequest('POST', 'http://localhost:8080/upload', formData, {
         reportProgress: true
       });
 
