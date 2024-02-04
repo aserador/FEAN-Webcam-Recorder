@@ -18,7 +18,7 @@ export class AppComponent {
       },
       {
         label: 'My Videos',
-        routerLink: ''
+        routerLink: '/my-videos'
       },
     ];
   }

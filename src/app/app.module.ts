@@ -24,16 +24,16 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './landing/landing.component';
-import { UploadComponent } from './upload/upload.component';
 import { RecordRtcComponent } from './record-rtc/record-rtc.component';
 import { VideoRecordingService } from './record-rtc/record-service';
+import { MyVideosComponent } from './my-videos/my-videos.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LandingComponent,
-    UploadComponent,
     RecordRtcComponent,
+    MyVideosComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,7 +56,7 @@ import { VideoRecordingService } from './record-rtc/record-service';
     InputTextareaModule,
     RadioButtonModule,
     DropdownModule,
-    ButtonModule
+    ButtonModule,
   ],
   providers: [VideoRecordingService],
   bootstrap: [AppComponent]

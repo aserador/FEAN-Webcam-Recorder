@@ -4,7 +4,6 @@ const multer = require('multer');
 const admin = require('firebase-admin');
 const serviceAccount = require('./environments/credentials.json');
 
-// Initialize Firebase
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: 'https://fean-web-recorder-default-rtdb.firebaseio.com/',
@@ -33,7 +32,6 @@ app.post('/upload', upload.single('file'), (req, res) => {
     return;
   }
 
-  // Create a new blob in the bucket and upload the file data
   const blob = bucket.file(req.file.originalname.replace(/ /g, "_"));
   const blobStream = blob.createWriteStream();
 
@@ -42,10 +40,8 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 
   blobStream.on('finish', async () => {
-    // The public URL can be used to directly access the file via HTTP
     const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
 
-    // Save the data to the database under the specific user
     const ref = db.ref(`users/${userId}/videos`);
     await ref.push({ fileName: req.file.originalname, fileLocation: publicUrl });
 
@@ -53,6 +49,40 @@ app.post('/upload', upload.single('file'), (req, res) => {
   });
 
   blobStream.end(req.file.buffer);
+});
+
+app.get('/videos', async (req, res) => {
+  // TODO: Authenticate the user and get their ID - for now, use a sample user
+  const userId = 'sampleUser';
+
+  const ref = db.ref(`users/${userId}/videos`);
+  ref.once('value', async (snapshot) => {
+    const videos = snapshot.val();
+
+    const promises = Object.keys(videos).map(async key => {
+      const video = videos[key];
+      const file = bucket.file(video.fileName.replace(/ /g, "_"));
+
+      const [url] = await file.getSignedUrl({
+        action: 'read',
+        expires: '03-17-2025'
+      });
+
+      return {
+        id: key,
+        fileName: video.fileName,
+        fileLocation: url
+      };
+    });
+
+    const videoArray = await Promise.all(promises);
+
+    console.log('Video array:', videoArray);
+    res.json(videoArray);
+  }, (error) => {
+    console.error(error);
+    res.status(500).send(error);
+  });
 });
 
 app.use(cors({
