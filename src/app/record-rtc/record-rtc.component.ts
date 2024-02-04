@@ -172,6 +172,14 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
 
   ngOnDestroy(): void {
     this.abortVideoRecording();
+  
+    if (this.videoStream) {
+      this.videoStream.getTracks().forEach(track => {
+        if (track.kind === 'video') {
+          track.stop();
+        }
+      });
+    }
   }
 
   _downloadFile(data: Blob, type: string, filename: string): any {
