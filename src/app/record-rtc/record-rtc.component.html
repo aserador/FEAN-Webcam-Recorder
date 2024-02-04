@@ -1,24 +1,33 @@
-<div>
-    <div>
-      <div>Video</div>
+<div class="p-grid p-justify-center p-align-center">
+  <div class="p-col-12 p-md-8 p-lg-6">
+    <p-card title="Video Quality">
       <p-selectButton [options]="videoQualities" [(ngModel)]="selectedQuality" optionLabel="label" optionValue="value"></p-selectButton>
-      <div>
-        <button class="start-button" *ngIf="!isVideoRecording && !videoBlobUrl" (click)="startVideoRecording()">Start Video Recording</button>
-        <button class="stop-button" *ngIf="isVideoRecording && !videoBlobUrl" (click)="stopVideoRecording()">Stop Video Recording</button>
-        <button class="cancel-button" *ngIf="!isVideoRecording && videoBlobUrl" (click)="clearVideoRecordedData()">Clear Video Recording</button>
-        <button class="download-button" *ngIf="!isVideoRecording && videoBlobUrl" (click)="downloadVideoRecordedData()">Download Video Recording</button>
-        <div id="videoTimer" *ngIf="isVideoRecording && !videoBlobUrl"> {{ videoRecordedTime }} </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="text-center">
-          <h3>
-            <video #videoElement>
-              <source *ngIf="!isVideoRecording && videoBlobUrl" [src]="videoBlobUrl">
-            </video>
-          </h3>
+      <p-divider></p-divider>
+      <div id="videoTimer" *ngIf="isVideoRecording && !videoBlobUrl" class="video-timer"> {{ videoRecordedTime }} </div>
+      <div class="video-container">
+        <video #videoElement class="video">
+          <source *ngIf="!isVideoRecording && videoBlobUrl" [src]="videoBlobUrl">
+        </video>
+        <div *ngIf="!(hasCamera | async)" class="video-placeholder">
+          No camera found. Please check your camera permissions or connect a camera.
         </div>
       </div>
-    </div>
+      <p-footer>
+        <div class="p-grid p-justify-center button-container">
+          <div class="p-col">
+            <p-button label="Start Recording" class="p-button-success" *ngIf="!isVideoRecording && !videoBlobUrl" (click)="startVideoRecording()"></p-button>
+          </div>
+          <div class="p-col">
+            <p-button label="Stop Recording" class="p-button-warning" *ngIf="isVideoRecording && !videoBlobUrl" (click)="stopVideoRecording()"></p-button>
+          </div>
+          <div class="p-col">
+            <p-button label="Redo Recording" class="p-button-danger" *ngIf="!isVideoRecording && videoBlobUrl" (click)="clearVideoRecordedData()"></p-button>
+          </div>
+          <div class="p-col">
+            <p-button label="Download Video" class="p-button-info" *ngIf="!isVideoRecording && videoBlobUrl" (click)="downloadVideoRecordedData()"></p-button>
+          </div>
+        </div>
+      </p-footer>
+    </p-card>
+  </div>
 </div>

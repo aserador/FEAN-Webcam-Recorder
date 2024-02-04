@@ -32,7 +32,9 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     { label: '1080p', value: '1080p' },
     { label: '4k', value: '4k' },
   ];
-  private _selectedQuality = '720p';
+  private _selectedQuality = '1080p';
+  
+  hasCamera: Promise<boolean> = Promise.resolve(true);
 
   set selectedQuality(value: string) {
     if (this.videoQualities.some(q => q.value === value)) {
@@ -72,22 +74,48 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    console.log('RecordRtcComponent ngOnInit called');
+    this.previewCamera();
+
+    this.hasCamera = navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        stream.getTracks().forEach(track => track.stop());
+        return true;
+      })
+      .catch(error => {
+        return false;
+      });
   }
 
   ngAfterViewInit() {
     this.video = this.videoElement.nativeElement;
   }
 
+  previewCamera() {
+    navigator.mediaDevices.getUserMedia(this.videoConf)
+    .then(stream => {
+      this.videoStream = stream;
+      this.video.srcObject = this.videoStream;
+      this.video.muted = true;
+      this.video.play();
+    })
+    .catch(function (err) {
+      console.log(err.name + ": " + err.message);
+    });
+  }
+
   startVideoRecording() {
     console.log('startVideoRecording called');
     if (!this.isVideoRecording) {
       this.video.controls = false;
-      this.video.muted = true;
       this.isVideoRecording = true;
       this.videoRecordingService.startRecording(this.videoConf)
       .then(stream => {
-        this.video.srcObject = stream;
+        if (this.videoStream) {
+          let tracks = this.videoStream.getTracks();
+          tracks.forEach(track => track.stop());
+        }
+        this.videoStream = stream;
+        this.video.srcObject = this.videoStream;
         this.video.play();
       })
       .catch(function (err) {
@@ -116,6 +144,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       this.isVideoRecording = false;
       this.video.controls = true;
       this.video.muted = false;
+      this.video.classList.add('video-container');
     }
   }
 
@@ -124,6 +153,8 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     this.video.srcObject = null;
     this.video.controls = false;
     this.ref.detectChanges();
+
+    this.previewCamera();
   }
 
   downloadVideoRecordedData() {

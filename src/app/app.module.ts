@@ -16,7 +16,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { RatingModule } from 'primeng/rating';
 import { ToolbarModule } from 'primeng/toolbar';
 import { MenubarModule } from 'primeng/menubar';
+import { CardModule } from 'primeng/card';
 import { SelectButtonModule } from 'primeng/selectbutton';
+import { DividerModule } from 'primeng/divider';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,6 +39,8 @@ import { VideoRecordingService } from './record-rtc/record-service';
     AppRoutingModule,
     BrowserAnimationsModule,
     SelectButtonModule,
+    DividerModule,
+    CardModule,
     MenubarModule,
     FormsModule,
     TableModule,
