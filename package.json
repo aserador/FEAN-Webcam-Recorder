@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "server": "node ./src/server.js",
+    "start:dev": "concurrently \"npm run start\" \"npm run server\"",
     "test": "ng test"
   },
   "private": true,
@@ -20,14 +20,18 @@
     "@angular/platform-browser-dynamic": "^17.1.0",
     "@angular/router": "^17.1.0",
     "@types/moment": "^2.13.0",
+    "cors": "^2.8.5",
     "express": "^4.18.2",
     "firebase": "^10.8.0",
+    "firebase-admin": "^12.0.0",
+    "multer": "^1.4.5-lts.1",
     "ngx-webcam": "^0.4.1",
     "primeicons": "^6.0.1",
     "primeng": "^17.5.0",
     "recordrtc": "^5.6.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "uuid": "^9.0.1",
     "zone.js": "~0.14.3"
   },
   "devDependencies": {
@@ -36,6 +40,7 @@
     "@angular/compiler-cli": "^17.1.0",
     "@types/jasmine": "~5.1.0",
     "@types/recordrtc": "^5.6.14",
+    "concurrently": "^8.2.2",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

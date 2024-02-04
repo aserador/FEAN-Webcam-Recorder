@@ -3,7 +3,7 @@ import RecordRTC from 'recordrtc';
 import moment from "moment";
 import { Observable, Subject, BehaviorSubject } from 'rxjs';
 
-interface RecordedVideoOutput {
+export interface RecordedVideoOutput {
   blob: Blob;
   url: string;
   title: string;
@@ -31,7 +31,7 @@ export class VideoRecordingService {
   
   private options: RecordRTC.Options = {
     type: 'video',
-    mimeType: 'video/mp4',
+    mimeType: 'video/webm',
     bitsPerSecond: 128000
   };
   
@@ -143,7 +143,7 @@ export class VideoRecordingService {
     if (this.recorder) {
       const recordedBlob = this.recorder.getBlob();
       const blobUrl = URL.createObjectURL(recordedBlob); // Create a URL from the Blob
-      const recordedName = encodeURIComponent('video_' + new Date().getTime() + '.webm');
+      const recordedName = encodeURIComponent('video_' + new Date().getTime() + '.mp4');
       this._recorded.next({ blob: recordedBlob, url: blobUrl, title: recordedName }); // Pass the URL instead of the Blob
       this.stopMedia();
     }

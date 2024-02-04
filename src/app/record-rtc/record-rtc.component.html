@@ -26,8 +26,34 @@
           <div class="p-col">
             <p-button label="Download Video" class="p-button-info" *ngIf="!isVideoRecording && videoBlobUrl" (click)="downloadVideoRecordedData()"></p-button>
           </div>
+          <div class="p-col">
+            <p-button label="Upload Video" class="p-button-secondary" *ngIf="!isVideoRecording && videoBlobUrl" (click)="showUploadDialog()"></p-button>
+          </div>
         </div>
       </p-footer>
     </p-card>
   </div>
 </div>
+
+<!-- Upload confirmation dialog -->
+<p-dialog [(visible)]="showUploadConfirmationDialog" [modal]="true">
+  <p-header>
+    Confirm Upload
+  </p-header>
+  <p-footer>
+    <button type="button" pButton icon="pi pi-check" label="Yes" (click)="uploadVideo()"></button>
+    <button type="button" pButton icon="pi pi-times" label="No" (click)="hideUploadDialog()"></button>
+  </p-footer>
+</p-dialog>
+
+<!-- Upload progress dialog -->
+<p-dialog [(visible)]="showUploadProgressDialog" [modal]="true">
+  <p-header>
+    Uploading Video
+  </p-header>
+  <p-progressBar [value]="uploadProgress"></p-progressBar>
+  <p-footer *ngIf="uploadProgress === 100">
+    <button type="button" pButton icon="pi pi-check" label="Continue Recording" (click)="continueRecording()"></button>
+    <button type="button" pButton icon="pi pi-home" label="Go to Home Page" routerLink="/"></button>
+  </p-footer>
+</p-dialog>

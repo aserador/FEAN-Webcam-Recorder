@@ -19,6 +19,7 @@ import { MenubarModule } from 'primeng/menubar';
 import { CardModule } from 'primeng/card';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { DividerModule } from 'primeng/divider';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -38,6 +39,7 @@ import { VideoRecordingService } from './record-rtc/record-service';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    ProgressBarModule,
     SelectButtonModule,
     DividerModule,
     CardModule,

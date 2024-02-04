@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { VideoRecordingService } from './record-service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { HttpClient, HttpEventType, HttpRequest } from '@angular/common/http';
+import { RecordedVideoOutput } from './record-service';
 
 @Component({
   selector: 'app-record-rtc',
@@ -32,18 +34,22 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     { label: '1080p', value: '1080p' },
     { label: '4k', value: '4k' },
   ];
-  private _selectedQuality = '1080p';
   
   hasCamera: Promise<boolean> = Promise.resolve(true);
 
+  videoToUpload: RecordedVideoOutput | undefined;
+  showUploadConfirmationDialog = false;
+  showUploadProgressDialog = false;
+  uploadProgress = 0;
+
   set selectedQuality(value: string) {
     if (this.videoQualities.some(q => q.value === value)) {
-      this._selectedQuality = value;
       this.videoRecordingService.setResolution(value as "420p" | "720p" | "1080p" | "4k");
     }
   }
 
   constructor(
+    private http: HttpClient,
     private ref: ChangeDetectorRef,
     private videoRecordingService: VideoRecordingService,
     private sanitizer: DomSanitizer
@@ -134,6 +140,9 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
 
   stopVideoRecording() {
     if (this.isVideoRecording) {
+      this.videoRecordingService.getRecordedBlob().subscribe((data: RecordedVideoOutput) => {
+        this.videoToUpload = data;
+      });
       this.videoRecordingService.stopRecording();
       if (this.video.srcObject) {
         let stream = this.video.srcObject as MediaStream;
@@ -174,5 +183,51 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     document.body.appendChild(anchor);
     anchor.click();
     document.body.removeChild(anchor);
+  }
+
+  showUploadDialog() {
+    this.showUploadConfirmationDialog = true;
+    this.ref.detectChanges();
+  }
+
+  hideUploadDialog() {
+    this.showUploadConfirmationDialog = false;
+    this.ref.detectChanges();
+  }
+
+  continueRecording() {
+    this.showUploadProgressDialog = false;
+    this.videoToUpload = undefined;
+    this.uploadProgress = 0;
+  }
+
+  uploadVideo() {
+    console.log('uploadVideo called');
+    console.log(this.videoToUpload)
+    if (this.videoToUpload) {
+      console.log('uploading video');
+      const formData = new FormData();
+      formData.append('file', this.videoToUpload.blob, this.videoToUpload.title);
+
+      console.log('uploading video');
+      const req = new HttpRequest('POST', 'http://localhost:3000/upload', formData, {
+        reportProgress: true
+      });
+
+      this.showUploadConfirmationDialog = false;
+      this.showUploadProgressDialog = true;
+      this.ref.detectChanges();
+
+      this.http.request(req).subscribe(event => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.uploadProgress = Math.round(100 * event.loaded / (event.total ?? 0));
+        } else if (event.type === HttpEventType.Response) {
+          console.log(event.body);
+
+          this.videoToUpload = undefined;
+          this.uploadProgress = 0;
+        }
+      });
+    }
   }
 }
