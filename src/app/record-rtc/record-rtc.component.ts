@@ -3,6 +3,7 @@ import { VideoRecordingService } from './record-service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HttpClient, HttpEventType, HttpRequest } from '@angular/common/http';
 import { RecordedVideoOutput } from './record-service';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-record-rtc',
@@ -42,6 +43,13 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   showUploadProgressDialog = false;
   uploadProgress = 0;
 
+  countdownValue: number = 3;
+  isCountdownActive: boolean = false;
+  countdownInterval: any;
+
+  stepItems: MenuItem[] = [];
+  activeIndex: number = 0;
+
   set selectedQuality(value: string) {
     if (this.videoQualities.some(q => q.value === value)) {
       this.videoRecordingService.setResolution(value as "420p" | "720p" | "1080p" | "4k");
@@ -80,6 +88,12 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
+    this.stepItems = [
+      {label: 'Record'},
+      {label: 'Review'},
+      {label: 'Upload'}
+    ];
+
     this.previewCamera();
 
     this.hasCamera = navigator.mediaDevices.getUserMedia({ video: true })
@@ -109,10 +123,32 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     });
   }
 
-  startVideoRecording() {
-    console.log('startVideoRecording called');
-    if (!this.isVideoRecording) {
+  startRecordingCountdown() {
+    this.activeIndex = 0;
+    if (!this.isVideoRecording && !this.isCountdownActive) {
       this.video.controls = false;
+      this.isCountdownActive = true;
+      this.countdownValue = 3;
+      this.ref.detectChanges();
+
+      if (this.countdownInterval) {
+        clearInterval(this.countdownInterval);
+      }
+
+      this.countdownInterval = setInterval(() => {
+        this.countdownValue--;
+        this.ref.detectChanges();
+        if (this.countdownValue === 0) {
+          clearInterval(this.countdownInterval);
+          this.isCountdownActive = false;
+          this.ref.detectChanges();
+          this.startVideoRecording();
+        }
+      }, 1000);
+    }
+  }
+
+  startVideoRecording() {
       this.isVideoRecording = true;
       this.videoRecordingService.startRecording(this.videoConf)
       .then(stream => {
@@ -127,7 +163,6 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       .catch(function (err) {
         console.log(err.name + ": " + err.message);
       });
-    }
   }
 
   abortVideoRecording() {
@@ -135,11 +170,15 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       this.isVideoRecording = false;
       this.videoRecordingService.abortRecording();
       this.video.controls = false;
+      this.activeIndex = 0;
+      this.ref.detectChanges();
+
     }
   }
 
   stopVideoRecording() {
     if (this.isVideoRecording) {
+      this.activeIndex = 1;
       this.videoRecordingService.getRecordedBlob().subscribe((data: RecordedVideoOutput) => {
         this.videoToUpload = data;
       });
@@ -153,7 +192,8 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       this.isVideoRecording = false;
       this.video.controls = true;
       this.video.muted = false;
-      this.video.classList.add('video-container');
+      this.ref.detectChanges();
+      //this.video.classList.add('video-container');
     }
   }
 
@@ -161,13 +201,14 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     this.videoBlobUrl = '';
     this.video.srcObject = null;
     this.video.controls = false;
+    this.activeIndex = 0;
     this.ref.detectChanges();
 
     this.previewCamera();
   }
 
   downloadVideoRecordedData() {
-    this._downloadFile(this.videoBlob, 'video/webm', this.videoName);
+    this.downloadFile(this.videoBlob, 'video/webm', this.videoName);
   }
 
   ngOnDestroy(): void {
@@ -178,7 +219,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     }
   }
 
-  _downloadFile(data: Blob, type: string, filename: string): any {
+  downloadFile(data: Blob, type: string, filename: string): any {
     const blob = new Blob([data], { type: type });
     const url = window.URL.createObjectURL(blob);
     const anchor = document.createElement('a');

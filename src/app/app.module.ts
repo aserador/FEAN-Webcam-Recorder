@@ -20,6 +20,7 @@ import { CardModule } from 'primeng/card';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { DividerModule } from 'primeng/divider';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { StepsModule } from 'primeng/steps';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -39,6 +40,7 @@ import { MyVideosComponent } from './my-videos/my-videos.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    StepsModule,
     ProgressBarModule,
     SelectButtonModule,
     DividerModule,
