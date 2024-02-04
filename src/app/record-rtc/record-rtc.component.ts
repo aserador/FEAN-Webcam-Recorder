@@ -174,11 +174,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     this.abortVideoRecording();
   
     if (this.videoStream) {
-      this.videoStream.getTracks().forEach(track => {
-        if (track.kind === 'video') {
-          track.stop();
-        }
-      });
+      this.videoStream.getTracks().forEach(track => track.stop());
     }
   }
 
