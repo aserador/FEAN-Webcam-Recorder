@@ -9,6 +9,10 @@ export interface RecordedVideoOutput {
   title: string;
 }
 
+/**
+ * Service for recording video using RecordRTC library.
+ * Provides methods for starting and stopping video recording, and for setting the video resolution.
+ */
 @Injectable()
 export class VideoRecordingService {
 
@@ -37,6 +41,14 @@ export class VideoRecordingService {
   
   private selectedResolution = new BehaviorSubject<'420p' | '720p' | '1080p' | '4k'>('720p');
 
+  /**
+   * Constructs a new instance of the RecordService class.
+   * 
+   * @constructor
+   * Subscribes to the selectedResolution BehaviorSubject. When the resolution changes, 
+   * it updates the bitsPerSecond option in the options object to match the bitsPerSecond 
+   * of the selected resolution.
+   */
   constructor() {
     this.selectedResolution.subscribe(resolution => {
       const selectedResolution = this.resolutions[resolution];
@@ -44,30 +56,60 @@ export class VideoRecordingService {
     });
   }
   
+  /**
+   * Sets the resolution for the video recording.
+   * @param resolution - The resolution for the video recording. Can be '420p', '720p', '1080p', or '4k'.
+   */
   public setResolution(resolution: '420p' | '720p' | '1080p' | '4k'): void {
     this.selectedResolution.next(resolution);
   }
 
+  /**
+   * Returns an Observable that emits the URL of the recorded video.
+   * @returns An Observable<string> that emits the URL of the recorded video.
+   */
   getRecordedUrl(): Observable<string> {
     return this._recordedUrl.asObservable();
   }
   
+  /**
+   * Returns an Observable that emits the recorded video output.
+   * @returns An Observable<RecordedVideoOutput> that emits the recorded video output.
+   */
   getRecordedBlob(): Observable<RecordedVideoOutput> {
     return this._recorded.asObservable();
   }
 
+  /**
+   * Returns an Observable that emits the recorded time.
+   * @returns An Observable<string> that emits the recorded time.
+   */
   getRecordedTime(): Observable<string> {
     return this._recordingTime.asObservable();
   }
 
+  /**
+   * Returns an Observable that emits when the recording fails.
+   * @returns An Observable<string> that emits when the recording fails.
+   */
   recordingFailed(): Observable<string> {
     return this._recordingFailed.asObservable();
   }
 
+  /**
+   * Returns an Observable that emits the MediaStream used for recording.
+   * @returns An Observable<MediaStream> that emits the MediaStream used for recording.
+   */
   getStream(): Observable<MediaStream> {
     return this._stream.asObservable();
   }
 
+  /**
+   * Starts the recording process.
+   * 
+   * @param conf - The configuration for recording.
+   * @returns A promise that resolves with the recorded stream.
+   */
   startRecording( conf: any ): Promise<any> {
     console.log('startRecording called');
 
@@ -90,10 +132,19 @@ export class VideoRecordingService {
     });
   }
 
+  /**
+   * Aborts the recording process.
+   */
   abortRecording() {
     this.stopMedia();
   }
 
+  /**
+   * Starts recording the media stream.
+   * If a media stream is available, it creates a new RecordRTC instance, starts recording,
+   * and updates the recording time every 500 milliseconds.
+   * If no media stream is available, it logs a message indicating the absence of a media stream.
+   */
   private record() {
     if (this.stream) {
       this.recorder = new RecordRTC(this.stream, this.options);
@@ -117,6 +168,13 @@ export class VideoRecordingService {
     );
   }
 
+  /**
+   * Converts a value to a string representation for minutes and seconds.
+   * If the value is falsy, it returns '00'.
+   * If the value is less than 10, it prepends a '0' to the value.
+   * @param value - The value to convert.
+   * @returns The string representation of the value.
+   */
   private toString(value: any) {
     let val = value;
     if (!value) {
@@ -128,6 +186,10 @@ export class VideoRecordingService {
     return val;
   }
 
+  /**
+   * Stops the recording process.
+   * If a recorder instance exists, it stops the recording and processes the video.
+   */
   stopRecording() {
     if (this.recorder) {
       this.recorder.stopRecording(() => {
@@ -139,6 +201,11 @@ export class VideoRecordingService {
     }
   }
   
+  /**
+   * Processes the recorded video by getting the Blob, creating a URL from the Blob,
+   * and passing the URL instead of the Blob to the subscribers.
+   * Also stops the media after processing.
+   */
   private processVideo() {
     if (this.recorder) {
       const recordedBlob = this.recorder.getBlob();
@@ -149,6 +216,9 @@ export class VideoRecordingService {
     }
   }
   
+  /**
+   * Stops the media recording and releases the resources.
+   */
   private stopMedia() {
     if (this.recorder) {
       this.recorder = undefined;

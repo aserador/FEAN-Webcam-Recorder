@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+/**
+ * Represents the component for displaying and navigating through a list of videos.
+ */
 @Component({
   selector: 'app-my-videos',
   templateUrl: './my-videos.component.html',
@@ -12,18 +15,27 @@ export class MyVideosComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
+  /**
+   * Initializes the component by fetching the list of videos from the server.
+   */
   ngOnInit() {
     this.http.get<any[]>('http://localhost:8080/videos').subscribe(videos => { 
       this.videos = videos;
     });
   }
 
+  /**
+   * Moves to the previous video in the list.
+   */
   previousVideo() {
     if (this.currentIndex > 0) {
       this.currentIndex--;
     }
   }
 
+  /**
+   * Moves to the next video in the list.
+   */
   nextVideo() {
     if (this.currentIndex < this.videos.length - 1) {
       this.currentIndex++;

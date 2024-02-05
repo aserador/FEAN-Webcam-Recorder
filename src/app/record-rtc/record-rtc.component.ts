@@ -5,6 +5,11 @@ import { HttpClient, HttpEventType, HttpRequest } from '@angular/common/http';
 import { RecordedVideoOutput } from './record-service';
 import { MenuItem } from 'primeng/api';
 
+/**
+ * Allows recording videos using the RecordRTC library.
+ * It provides functionalities such as previewing the camera, starting and stopping video recording, 
+ * and uploading recorded videos. It also handles various video recording states and updates the UI accordingly.
+ */
 @Component({
   selector: 'app-record-rtc',
   templateUrl: './record-rtc.component.html',
@@ -50,20 +55,27 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   stepItems: MenuItem[] = [];
   activeIndex: number = 0;
 
-  set selectedQuality(value: string) {
-    if (this.videoQualities.some(q => q.value === value)) {
-      this.videoRecordingService.setResolution(value as "420p" | "720p" | "1080p" | "4k");
-    }
-  }
-
+  /**
+   * Constructs a new instance of the RecordRtcComponent class.
+   * 
+   * @constructor
+   * @param {HttpClient} http - The HttpClient for making HTTP requests.
+   * @param {ChangeDetectorRef} ref - The ChangeDetectorRef for triggering change detection.
+   * @param {VideoRecordingService} videoRecordingService - The VideoRecordingService for handling video recording.
+   * @param {DomSanitizer} sanitizer - The DomSanitizer for sanitizing URLs.
+   * 
+   * Subscribes to various observables from the VideoRecordingService:
+   * - When recording fails, it sets isVideoRecording to false and triggers change detection.
+   * - When the recorded time changes, it updates videoRecordedTime and triggers change detection.
+   * - When the stream changes, it updates videoStream and triggers change detection.
+   * - When the recorded blob changes, it updates videoBlob, videoName, and videoBlobUrl, and triggers change detection.
+   */
   constructor(
     private http: HttpClient,
     private ref: ChangeDetectorRef,
     private videoRecordingService: VideoRecordingService,
     private sanitizer: DomSanitizer
   ) {
-    console.log('RecordRtcComponent constructor called');
-
     this.videoRecordingService.recordingFailed().subscribe(() => {
       this.isVideoRecording = false;
       this.ref.detectChanges();
@@ -87,6 +99,12 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     });
   }
 
+  /**
+   * Initializes the component.
+   * - Sets up the step items.
+   * - Previews the camera.
+   * - Checks if the camera is available.
+   */
   ngOnInit() {
     this.stepItems = [
       {label: 'Record'},
@@ -106,10 +124,28 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       });
   }
 
+  /**
+   * Called after Angular has fully initialized the component's view.
+   * It is called only once after the first ngAfterContentChecked.
+   */
   ngAfterViewInit() {
     this.video = this.videoElement.nativeElement;
   }
 
+  /**
+   * Sets the selected video quality.
+   * 
+   * @param value - The selected video quality value.
+   */
+  set selectedQuality(value: string) {
+    if (this.videoQualities.some(q => q.value === value)) {
+      this.videoRecordingService.setResolution(value as "420p" | "720p" | "1080p" | "4k");
+    }
+  }
+
+  /**
+   * Starts the preview of the camera by accessing the user's media devices and displaying the video stream.
+   */
   previewCamera() {
     navigator.mediaDevices.getUserMedia(this.videoConf)
     .then(stream => {
@@ -123,6 +159,12 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     });
   }
 
+  /**
+   * Starts the countdown for video recording.
+   * If video recording is not active and countdown is not already active,
+   * it sets the countdown value to 3 and starts the countdown interval.
+   * When the countdown reaches 0, it stops the countdown interval and starts video recording.
+   */
   startRecordingCountdown() {
     this.activeIndex = 0;
     if (!this.isVideoRecording && !this.isCountdownActive) {
@@ -148,6 +190,11 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Starts the video recording process.
+   * Begins recording with the current video configuration, handles any existing video streams, 
+   * and logs any errors that occur during the process.
+   */
   startVideoRecording() {
       this.isVideoRecording = true;
       this.videoRecordingService.startRecording(this.videoConf)
@@ -165,6 +212,11 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       });
   }
 
+  /**
+   * Aborts the video recording process.
+   * If a video is currently being recorded, it stops the recording, hides the video controls, 
+   * resets the active index to 0, and triggers change detection.
+   */
   abortVideoRecording() {
     if (this.isVideoRecording) {
       this.isVideoRecording = false;
@@ -176,6 +228,11 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * Stops the video recording process.
+   * If a video is currently being recorded, it stops the recording, retrieves the recorded blob, 
+   * stops all tracks on the video stream, resets the video source, and updates the UI.
+   */
   stopVideoRecording() {
     if (this.isVideoRecording) {
       this.activeIndex = 1;
@@ -193,10 +250,12 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       this.video.controls = true;
       this.video.muted = false;
       this.ref.detectChanges();
-      //this.video.classList.add('video-container');
     }
   }
 
+  /**
+   * Clears the recorded video data and resets the component state.
+   */
   clearVideoRecordedData() {
     this.videoBlobUrl = '';
     this.video.srcObject = null;
@@ -207,10 +266,17 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     this.previewCamera();
   }
 
+  /**
+   * Downloads the recorded video data (webm format)
+   */
   downloadVideoRecordedData() {
     this.downloadFile(this.videoBlob, 'video/webm', this.videoName);
   }
 
+  /**
+   * Called when the component is about to be destroyed.
+   * It aborts the video recording and stops all tracks of the video stream.
+   */
   ngOnDestroy(): void {
     this.abortVideoRecording();
   
@@ -218,7 +284,14 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
       this.videoStream.getTracks().forEach(track => track.stop());
     }
   }
-
+  
+  /**
+   * Creates a downloadable file from a Blob object and triggers the download.
+   * 
+   * @param {Blob} data - The data to be downloaded.
+   * @param {string} type - The MIME type of the data.
+   * @param {string} filename - The name of the file to be downloaded.
+   */
   downloadFile(data: Blob, type: string, filename: string): any {
     const blob = new Blob([data], { type: type });
     const url = window.URL.createObjectURL(blob);
@@ -230,32 +303,47 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
     document.body.removeChild(anchor);
   }
 
+  /**
+   * Shows the upload dialog and triggers change detection.
+   */
   showUploadDialog() {
     this.showUploadConfirmationDialog = true;
     this.ref.detectChanges();
   }
 
+  /**
+   * Hides the upload confirmation dialog.
+   */
   hideUploadDialog() {
     this.showUploadConfirmationDialog = false;
     this.ref.detectChanges();
   }
 
+  /**
+   * Continues the recording process by resetting the upload progress and clearing the video to upload.
+   */
   continueRecording() {
     this.showUploadProgressDialog = false;
     this.videoToUpload = undefined;
     this.uploadProgress = 0;
   }
 
+  /**
+   * Uploads the recorded video to a server.
+   * 
+   * If a video is ready to be uploaded, it creates a new FormData object, appends the video blob and title to it, 
+   * and sends a POST request to the server with the FormData object. It also updates the UI to reflect the upload progress.
+   * 
+   * If the upload is successful, it resets `videoToUpload`.
+   */
   uploadVideo() {
     this.activeIndex = 2;
     this.uploadProgress = 0;
     this.ref.detectChanges();
     if (this.videoToUpload) {
-      console.log('uploading video');
       const formData = new FormData();
       formData.append('file', this.videoToUpload.blob, this.videoToUpload.title);
 
-      console.log('uploading video');
       const req = new HttpRequest('POST', 'http://localhost:8080/upload', formData, {
         reportProgress: true
       });
@@ -268,8 +356,6 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
         if (event.type === HttpEventType.UploadProgress) {
           this.uploadProgress = Math.round(100 * event.loaded / (event.total ?? 0));
         } else if (event.type === HttpEventType.Response) {
-          console.log(event.body);
-
           this.videoToUpload = undefined;
         }
       });
