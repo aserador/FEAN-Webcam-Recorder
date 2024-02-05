@@ -20,4 +20,16 @@ describe('LandingComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have a title in the template', () => {
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('h1').textContent).toContain('Webcam Recorder');
+  });
+  
+  it('should have a button in the template', () => {
+    fixture.detectChanges();
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('button').textContent).toContain('Get Started');
+  });
 });
