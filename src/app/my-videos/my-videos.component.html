@@ -1,10 +1,9 @@
+<h2 class="video-title">{{ videos[currentIndex].fileName }}</h2>
 <div class="video-container" *ngIf="videos.length > 0">
-  <h2 class="video-title">{{ videos[currentIndex].fileName }}</h2>
-  <div class="video-player">
-    <p-button class="video-nav-button" (click)="previousVideo()" [disabled]="currentIndex === 0">&#8249;</p-button>
-    <video controls [src]="videos[currentIndex].fileLocation">
-      Your browser does not support the video tag.
-    </video>
-    <p-button class="video-nav-button" (click)="nextVideo()" [disabled]="currentIndex === videos.length - 1">&#8250;</p-button>
-  </div>
+  <p-button class="video-nav-button" (click)="previousVideo()" [disabled]="currentIndex === 0">&#8249;</p-button>
+  <video controls [src]="videos[currentIndex].fileLocation">
+    Your browser does not support the video tag.
+  </video>
+  <p-button class="video-nav-button" (click)="nextVideo()" [disabled]="currentIndex === videos.length - 1">&#8250;</p-button>
 </div>
+<p class="video-index" *ngIf="videos.length > 0">Showing {{ currentIndex + 1 }} out of {{ videos.length }}</p>

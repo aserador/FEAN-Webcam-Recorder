@@ -1,18 +1,34 @@
 .video-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  width: 60%;
+  height: auto;
+  margin: 0 auto; /* This will center the container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.video-player {
+  width: 100%;
+  height: auto;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}
+
+.video-title {
+  margin: 1em 0;
+  font-size: 1.5em;
+  text-align: center;
+}
   
-  .video-title {
-    text-align: center;
-  }
-  
-  .video-player {
-    display: flex;
-    align-items: center;
-  }
-  
-  .video-nav-button {
-    margin: 0 1em;
-  }
+.video-nav-button {
+  margin: 0 10px; /* Add some space between the buttons and the video */
+}
+
+.video-index {
+  text-align: center;
+  font-weight: bold;
+}

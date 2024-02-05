@@ -17,10 +17,11 @@ export class MyVideosComponent implements OnInit {
 
   /**
    * Initializes the component by fetching the list of videos from the server.
+   * Sorts the video list in reverse order to display the most recent videos first.
    */
   ngOnInit() {
     this.http.get<any[]>('http://localhost:8080/videos').subscribe(videos => { 
-      this.videos = videos;
+      this.videos = videos.reverse();
     });
   }
 
