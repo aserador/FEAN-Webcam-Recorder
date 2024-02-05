@@ -24,7 +24,7 @@ const upload = multer({
 });
 
 app.post('/upload', upload.single('file'), (req, res) => {
-  // TODO: Authenticate the user and get their ID - for now, use a sample user
+  // Authenticate the user and get their ID - for now, use a sample user
   const userId = 'sampleUser';
 
   if (!req.file) {
@@ -52,7 +52,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 });
 
 app.get('/videos', async (req, res) => {
-  // TODO: Authenticate the user and get their ID - for now, use a sample user
+  // Authenticate the user and get their ID - for now, use a sample user
   const userId = 'sampleUser';
 
   const ref = db.ref(`users/${userId}/videos`);
@@ -65,7 +65,7 @@ app.get('/videos', async (req, res) => {
 
       const [url] = await file.getSignedUrl({
         action: 'read',
-        expires: '03-17-2025'
+        expires: '01-01-2025'
       });
 
       return {
