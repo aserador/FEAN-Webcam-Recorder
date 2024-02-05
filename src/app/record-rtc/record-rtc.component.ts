@@ -119,9 +119,7 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
         stream.getTracks().forEach(track => track.stop());
         return true;
       })
-      .catch(error => {
-        return false;
-      });
+    this.ref.detectChanges();
   }
 
   /**

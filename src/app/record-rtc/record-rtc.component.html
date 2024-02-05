@@ -29,7 +29,7 @@
       <p-footer *ngIf="activeIndex !== 2">
         <div class="p-grid p-justify-center button-container">
           <div class="p-col button-spacing">
-            <p-button label="Start Recording" severity="success" *ngIf="!isVideoRecording && !videoBlobUrl" [disabled]="!(hasCamera | async)" (click)="startRecordingCountdown()"></p-button>
+            <p-button label="Start Recording" severity="success" *ngIf="!isVideoRecording && !videoBlobUrl" (click)="startRecordingCountdown()"></p-button>
           </div>
           <div class="p-col button-spacing">
             <p-button label="Stop Recording" severity="danger" *ngIf="isVideoRecording && !videoBlobUrl" (click)="stopVideoRecording()"></p-button>
