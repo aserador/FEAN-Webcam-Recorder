@@ -4,10 +4,13 @@ const multer = require('multer');
 const admin = require('firebase-admin');
 const serviceAccount = require('./environments/credentials.json');
 
+const DATABASE_URL = 'INSERT_DATABASE_URL_HERE';
+const STORAGE_BUCKET = 'INSERT_STORAGE_BUCKET_URL_HERE';
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://fean-web-recorder-default-rtdb.firebaseio.com/',
-  storageBucket: 'gs://fean-web-recorder.appspot.com'
+  databaseURL: DATABASE_URL,
+  storageBucket: STORAGE_BUCKET
 });
 
 const bucket = admin.storage().bucket();

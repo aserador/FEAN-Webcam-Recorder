@@ -54,6 +54,18 @@ Before you begin, ensure you have the met the following requirements:
 
 7. Under the `src` directory, create another folder titled `environemnts` and inside paste the private key contents into a new `credentials.json` file.
 
+8. In `src/server.js`, replace `DATABASE_URL` and `STORAGE_BUCKET` with your Firebase Realtime Database and Firebase Storage urls in your project, respectively.
+    ```TypeScript
+    const DATABASE_URL = 'INSERT_DATABASE_URL_HERE';
+    const STORAGE_BUCKET = 'INSERT_STORAGE_BUCKET_URL_HERE';
+
+    admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: DATABASE_URL,
+    storageBucket: STORAGE_BUCKET
+    });
+```
+
 8. Run the file
     ```sh
     npm run start:dev
