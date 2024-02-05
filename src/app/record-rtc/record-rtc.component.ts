@@ -247,8 +247,9 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
   }
 
   uploadVideo() {
-    console.log('uploadVideo called');
-    console.log(this.videoToUpload)
+    this.activeIndex = 2;
+    this.uploadProgress = 0;
+    this.ref.detectChanges();
     if (this.videoToUpload) {
       console.log('uploading video');
       const formData = new FormData();
@@ -270,7 +271,6 @@ export class RecordRtcComponent implements OnDestroy, OnInit {
           console.log(event.body);
 
           this.videoToUpload = undefined;
-          this.uploadProgress = 0;
         }
       });
     }

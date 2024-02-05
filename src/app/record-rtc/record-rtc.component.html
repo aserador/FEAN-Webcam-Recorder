@@ -1,12 +1,12 @@
 <div class="p-grid p-justify-center p-align-center">
-  <p-steps [model]="stepItems" [activeIndex]="activeIndex" [readonly]="true"></p-steps>
   <div class="p-col-12 p-md-8 p-lg-6">
     <p-card>
-      <h1>Render Quality</h1>
+      <p-steps [model]="stepItems" [activeIndex]="activeIndex" [readonly]="true" class="steps-padding"></p-steps>
+
+      <h1 *ngIf="activeIndex === 0">Render Quality</h1>
       <p-selectButton [options]="videoQualities" *ngIf="activeIndex === 0" [(ngModel)]="selectedQuality" optionLabel="label" optionValue="value"></p-selectButton>
       <p-divider></p-divider>
-      <div id="videoTimer" *ngIf="isVideoRecording && !videoBlobUrl" class="video-timer"> {{ videoRecordedTime }} </div>
-      <div class="video-container">
+      <div class="video-container" *ngIf="activeIndex !== 2">
         <video #videoElement class="video">
           <source *ngIf="!isVideoRecording && videoBlobUrl" [src]="videoBlobUrl">
         </video>
@@ -16,26 +16,39 @@
         <div *ngIf="!(hasCamera | async)" class="video-placeholder">
           No camera found. Please check your camera permissions or connect a camera.
         </div>
+        <div id="videoTimer" *ngIf="isVideoRecording && !videoBlobUrl" class="video-timer"> 
+          <div class="blinking-circle"></div>
+          {{ videoRecordedTime }} 
+        </div>
+
       </div>
-      <p-footer>
+      <p-footer *ngIf="activeIndex !== 2">
         <div class="p-grid p-justify-center button-container">
-          <div class="p-col">
-            <p-button label="Start Recording" class="p-button-success" *ngIf="!isVideoRecording && !videoBlobUrl" (click)="startRecordingCountdown()"></p-button>
+          <div class="p-col button-spacing">
+            <p-button label="Start Recording" severity="success" *ngIf="!isVideoRecording && !videoBlobUrl" [disabled]="!(hasCamera | async)" (click)="startRecordingCountdown()"></p-button>
           </div>
-          <div class="p-col">
-            <p-button label="Stop Recording" class="p-button-warning" *ngIf="isVideoRecording && !videoBlobUrl" (click)="stopVideoRecording()"></p-button>
+          <div class="p-col button-spacing">
+            <p-button label="Stop Recording" severity="danger" *ngIf="isVideoRecording && !videoBlobUrl" (click)="stopVideoRecording()"></p-button>
           </div>
-          <div class="p-col">
-            <p-button label="Redo Recording" class="p-button-danger" *ngIf="!isVideoRecording && videoBlobUrl" (click)="clearVideoRecordedData()"></p-button>
+          <div class="p-col button-spacing">
+            <p-button label="Redo Recording" severity="warning" *ngIf="!isVideoRecording && videoBlobUrl" (click)="clearVideoRecordedData()"></p-button>
           </div>
-          <div class="p-col">
-            <p-button label="Download Video" class="p-button-info" *ngIf="!isVideoRecording && videoBlobUrl" (click)="downloadVideoRecordedData()"></p-button>
+          <div class="p-col button-spacing">
+            <p-button label="Download Video" severity="secondary" *ngIf="!isVideoRecording && videoBlobUrl" (click)="downloadVideoRecordedData()"></p-button>
           </div>
-          <div class="p-col">
-            <p-button label="Upload Video" class="p-button-secondary" *ngIf="!isVideoRecording && videoBlobUrl" (click)="showUploadDialog()"></p-button>
+          <div class="p-col button-spacing">
+            <p-button label="Upload Video" severity="info" *ngIf="!isVideoRecording && videoBlobUrl" (click)="showUploadDialog()"></p-button>
           </div>
         </div>
       </p-footer>
+
+      <div class="upload-progress" *ngIf="showUploadProgressDialog">
+        <h1>{{ uploadProgress === 100 ? 'Success!' : 'Uploading...' }}</h1>
+        <p-progressBar [value]="uploadProgress"></p-progressBar>
+        <p-footer *ngIf="uploadProgress === 100">
+          <p-button label="Go to My Videos"class="my-videos-button" severity="success" routerLink="/my-videos"></p-button>
+        </p-footer>
+      </div>
     </p-card>
   </div>
 </div>
@@ -45,18 +58,7 @@
     Confirm Upload
   </p-header>
   <p-footer>
-    <button type="button" pButton icon="pi pi-check" label="Yes" (click)="uploadVideo()"></button>
-    <button type="button" pButton icon="pi pi-times" label="No" (click)="hideUploadDialog()"></button>
-  </p-footer>
-</p-dialog>
-
-<p-dialog [(visible)]="showUploadProgressDialog" [modal]="true">
-  <p-header>
-    Uploading Video
-  </p-header>
-  <p-progressBar [value]="uploadProgress"></p-progressBar>
-  <p-footer *ngIf="uploadProgress === 100">
-    <button type="button" pButton icon="pi pi-check" label="Continue Recording" (click)="continueRecording()"></button>
-    <button type="button" pButton icon="pi pi-home" label="Go to Home Page" routerLink="/"></button>
+    <p-button label="Yes" severity="success" (click)="uploadVideo()"></p-button>
+    <p-button label="No" severity="danger" (click)="hideUploadDialog()"></p-button>
   </p-footer>
 </p-dialog>
