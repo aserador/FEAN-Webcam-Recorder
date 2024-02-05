@@ -1,27 +1,103 @@
-# FeanWebRecorder
+<a name="readme-top"></a>
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.2.
+![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)
 
-## Development server
+# Simple FEAN Webcam Recorder
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+![Preview 1][preview]
 
-## Code scaffolding
+This is a simple webcam recorder app built using the FEAN stack (Firebase, Express.js, Angular, Node.js) and the RecordRTC library which features video webcam recording, download, and storing a recorded webcam video to the cloud (Firebase Realtime Database and Firebase Storage).
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+* [![Firebase][Firebase]][Firebase-url]
+* [![Express][Express.js]][Express-url]
+* [![Angular][Angular.io]][Angular-url]
+* [![Node][Node.js]][Node-url]
 
-## Build
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+<!-- GETTING STARTED -->
+## Getting Started
 
-## Running unit tests
+To run the web app on your local device, please follow the steps listed below:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Prerequisites
 
-## Running end-to-end tests
+Before you begin, ensure you have the met the following requirements:
+* [Latest version of Node.js/npm](https://nodejs.org/en/download)
+* [Firebase account + created project](https://firebase.google.com/)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Installation
 
-## Further help
+1. Clone the repository
+   ```sh
+   git clone https://github.com/AudricSerador/FEAN-Webcam-Recorder
+   ```
+2. Navigate to the repo
+    ```sh
+    cd FEAN-Webcam-Recorder
+    ```
+3. Install the project dependencies
+   ```sh
+   npm install
+   ```
+4. Log into Firebase and initialize project
+    ```sh
+    npm install -g firebase-tools
+    firebase login
+    firebase init
+    ```
+5. Inside your Firebase project, set up Realtime Database and Storage. Use default settings when prompted.
+![Preview 4][preview4]
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+6. Go to your project settings and generate a new private key. You should be prompted to download a JSON file.
+![Preview 3][preview3]
+
+7. Under the `src` directory, create another folder titled `environemnts` and inside paste the private key contents into a new `credentials.json` file.
+
+8. Run the file
+    ```sh
+    npm run start:dev
+    ```
+After running, an Express.js server should be running on port `8080`. To use the app, navigate to `http://localhost:4200` within your local browser.
+    
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- USAGE EXAMPLES -->
+## Usage
+
+After giving your local browser permissions to access your camera and microphone, you should be able to record, download, and upload your videos!
+
+![Preview 2][preview2]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- LICENSE -->
+## License
+
+Distributed under the MIT License. See `LICENSE.txt` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+Thanks to [Outbrand](https://outbrand.ai/) for allowing me this opportunity to develop this application.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[preview]: preview_images/preview.png
+[preview2]: preview_images/preview2.png
+[preview3]: preview_images/preview3.png
+[preview4]: preview_images/preview4.png
+
+[Firebase]: https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase
+[Firebase-url]: https://firebase.google.com/
+[Express.js]: https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB
+[Express-url]: https://expressjs.com/
+[Angular.io]: https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white
+[Angular-url]: https://angular.io/
+[Node.js]: https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white
+[Node-url]: https://nodejs.org/en
