@@ -14,7 +14,20 @@
   overflow: hidden;
 }
 
+.render-quality {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,6 +45,10 @@
   width: 100%;
   z-index: 5;
   box-shadow: inset 0 -10px 10px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start
 }
 
 .blinking-circle {
@@ -107,24 +124,7 @@
   padding: 0 20px;
 }
 
-:host ::ng-deep .p-dialog .p-dialog-content {
-  width: 30%;
-  z-index: 1000;
-}
-
 :host ::ng-deep .p-dialog .p-dialog-footer {
   display: flex;
   justify-content: center;
-  z-index: 1000;
-}
-
-.video-timer {
-  font-weight: bold;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
 }

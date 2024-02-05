@@ -2,10 +2,13 @@
   <div class="p-col-12 p-md-8 p-lg-6">
     <p-card>
       <p-steps [model]="stepItems" [activeIndex]="activeIndex" [readonly]="true" class="steps-padding"></p-steps>
+      <div class="render-quality" *ngIf="activeIndex === 0">
+        <h1>Render Quality</h1>
+        <p-selectButton [options]="videoQualities" [(ngModel)]="selectedQuality" optionLabel="label" optionValue="value"></p-selectButton>
+      </div>
 
-      <h1 *ngIf="activeIndex === 0">Render Quality</h1>
-      <p-selectButton [options]="videoQualities" *ngIf="activeIndex === 0" [(ngModel)]="selectedQuality" optionLabel="label" optionValue="value"></p-selectButton>
       <p-divider></p-divider>
+      
       <div class="video-container" *ngIf="activeIndex !== 2">
         <video #videoElement class="video">
           <source *ngIf="!isVideoRecording && videoBlobUrl" [src]="videoBlobUrl">
@@ -16,8 +19,10 @@
         <div *ngIf="!(hasCamera | async)" class="video-placeholder">
           No camera found. Please check your camera permissions or connect a camera.
         </div>
-        <div id="videoTimer" *ngIf="isVideoRecording && !videoBlobUrl" class="video-timer"> 
-          {{ videoRecordedTime }} 
+
+        <div id="videoTimer" *ngIf="isVideoRecording && !videoBlobUrl" class="video-timer">
+          <div class="blinking-circle"></div>
+          {{ videoRecordedTime }}
         </div>
 
       </div>
@@ -52,11 +57,12 @@
   </div>
 </div>
 
-<p-dialog [(visible)]="showUploadConfirmationDialog" [modal]="true">
+<p-dialog [(visible)]="showUploadConfirmationDialog" [resizable]="false" [draggable]="false" [modal]="true">
   <p-header>
     Confirm Upload
   </p-header>
-  <p-footer>
+  Are you sure you want to upload this video?
+  <p-footer class="dialog-footer">
     <p-button label="Yes" severity="success" (click)="uploadVideo()"></p-button>
     <p-button label="No" severity="danger" (click)="hideUploadDialog()"></p-button>
   </p-footer>
