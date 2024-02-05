@@ -40,11 +40,10 @@ Before you begin, ensure you have the met the following requirements:
    ```sh
    npm install
    ```
-4. Log into Firebase and initialize project
+4. Log into Firebase
     ```sh
     npm install -g firebase-tools
     firebase login
-    firebase init
     ```
 5. Inside your Firebase project, set up Realtime Database and Storage. Use default settings when prompted.
 ![Preview 4][preview4]
