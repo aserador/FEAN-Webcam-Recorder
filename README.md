@@ -64,7 +64,7 @@ Before you begin, ensure you have the met the following requirements:
     databaseURL: DATABASE_URL,
     storageBucket: STORAGE_BUCKET
     });
-```
+    ```
 
 8. Run the file
     ```sh
